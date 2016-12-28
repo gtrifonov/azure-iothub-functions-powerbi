@@ -1,0 +1,8 @@
+{
+  "name": "azure-iot-function-example",
+  "description": "Package.json for azure functions run time dependencies",
+  "author": "George Trifonov <gtrifonov@gmail.com>",
+  "dependencies": {
+    "request":"2.79.0"
+  }
+}

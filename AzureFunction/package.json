@@ -1,0 +1,11 @@
+{
+  "name": "azure-iot-function-example",
+  "description": "Example of azure function which send eventhub messages to Power BI endpoint",
+  "author": "George Trifonov <gtrifonov@gmail.com>",
+  "dependencies": {
+    "request":""
+  },
+  "devDependencies": {
+    "azure-functions-cli": "^1.0.0--beta.8"
+  }
+}

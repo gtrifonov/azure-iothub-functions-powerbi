@@ -1,0 +1,16 @@
+*node_modules*
+
+bin
+obj
+csx
+.vs
+edge
+Publish
+.vscode
+
+*.user
+*.suo
+*.cscfg
+*.Cache
+*.log
+project.lock.json

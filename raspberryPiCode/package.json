@@ -1,0 +1,10 @@
+{
+  "name": "azure-iot-raspberryPi-example",
+  "description": "Exaple to demo how to send messages to Azure IOT Hub from GrovePI board",
+  "author": "George Trifonov <gtrifonov@gmail.com>",
+  "dependencies": {
+    "azure-iot-device": "^1.1.2",
+    "azure-iot-device-amqp": "^1.1.2",
+    "node-grovepi":"2.1.1"
+  }
+}
