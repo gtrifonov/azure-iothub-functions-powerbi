@@ -12,33 +12,35 @@ Code in a project assume that GrovePI installed and configured.
 ### Hardware pre-requisites
 * RaspberryPI 2 or above
 * [GrovePI development board](https://www.dexterindustries.com/grovepi/)
-* Temperature/Humidity sensor DHT22 connected to digital port #3
+* Temperature/Humidity sensor DHT11 connected to digital port #3
 
 ### Software pre-requisites
 * Raspbian(used in article) or any other operating system capable running Node.js.
 * Node.js
-* npm 
+* npm
 * GrovePI board software libraries installed
-* git 
+* git
 
 
 ### Installing and running example in RaspBerry PI
 Once you configured your hardware and software run following commands.
 
 To download source code to your Raspberry PI.
-```
+
+```shell
 git clone  http://github.com/gtrifonov/azure-iothub-functions-powerbi
 ```
 
 Install dependency libraries
 
-```
+```shell
 cd gtrifonov/azure-iothub-functions-powerbi
-npm install 
+npm install
 ```
 
 Once all required packages installed to communicate with IoTHub and access sensor data  you need to open file piSensor.js
 and change line below  with IotHub connection string value.
+
 ```javascript
 string var connectionString = '[Connection string to Azure IOT HUB]';
 ```
@@ -58,15 +60,15 @@ See [Running Azure Functions Locally with the CLI and VS Code](https://blogs.msd
 
 On your windows machine clone github repository
 
-```
+```shell
 git clone  http://github.com/gtrifonov/azure-iothub-functions-powerbi
 cd gtrifonov/azure-iothub-functions-powerbi/AzureFunction
-npm install  
+npm install
 ```
 
 Initilized azure function to add missing configuration files such as appsetting.json which are not part of git repository
 
-```
+```shell
 func init
 func azure login
 func azure account set 
@@ -75,7 +77,8 @@ func azure functionapp fetch <NameOfAzureFuncApp>
 ```
 
 Run commands below to view and decrypt your configuration 
-```
+
+```shell
 func settings list -a
 func settings decrypt
 ```
@@ -84,11 +87,12 @@ Open file appsettings.json and verify that it has entry 'HUB' with connection st
 
 Open file \AzureFunction\IotRaspberryPI\function.json and modify value below with appropriate endpouint path information
 
-```
+```javascript
 "path": "[Event Hub-compatible name from AzurePortal IoTHUB endpoint properties]"
 ```
 
 To debug that function working locally run code below and attach VS Code debugger to Azure function process
-```
+
+```shell
 func run .\IotRaspberryPI\ -c "{ device: \"pi1\", measures:[1,2,3]}" --debug
 ```

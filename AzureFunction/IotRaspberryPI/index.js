@@ -3,11 +3,7 @@
 //Get formatted current time
 function getDateString() {
     const nowDate = new Date();
-    const hours = nowDate.getHours();
-    const minutes = nowDate.getMinutes();
-    const seconds = nowDate.getMinutes();
-    const strTime = hours + ':' + minutes + ':' + seconds + '.000Z';
-    return nowDate.getFullYear() + '-' + nowDate.getMonth() + '-' + nowDate.getDate() + "T" + strTime;
+    return nowDate.toISOString()
 }
 
 module.exports = function (context, myEventHubTrigger) {
