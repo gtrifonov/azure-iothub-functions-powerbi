@@ -28,9 +28,9 @@ module.exports = function (context, myEventHubTrigger) {
     const heatIndex = myEventHubTrigger.measures[2];
 
     // Droppping messages on invalid sensor data, sometimes happens with my board
-    if (temp > 300 || temp < 300 || humidity > 100 || humidity < 0) {
+    if (temp > 300 || temp < -300 || humidity > 100 || humidity < 0) {
         context.log("False sensor reading. Dropping message");
-        context.done();
+        context.done("False sensor reading. Dropping message");
         return;
     }
 
@@ -57,6 +57,8 @@ module.exports = function (context, myEventHubTrigger) {
         // This callback function will never be called
         if (error) {
             context.log("Error processing request", error);
+            context.done(error);
+            return;
         }
 
         context.log("Response Status Code", response.statusCode, body);
@@ -64,9 +66,10 @@ module.exports = function (context, myEventHubTrigger) {
             context.log("Succesfull response from PowerBi", body);
         } else {
             context.log("PowerBI error processing request", response.statusCode, body);
+            context.done({ status: response.statusCode, body: body });
+            return;
         }
         context.log('JavaScript eventhub trigger function processed work item', myEventHubTrigger);
-
         context.done();
     });
 
