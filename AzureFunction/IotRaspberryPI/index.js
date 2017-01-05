@@ -19,7 +19,7 @@ module.exports = function (context, myEventHubTrigger) {
     //If some fields are missing we are skippping
     if (!myEventHubTrigger.measures || !myEventHubTrigger.measures.length || myEventHubTrigger.measures.length < 3
         || isNaN(myEventHubTrigger.measures[0]) || isNaN(myEventHubTrigger.measures[1]) || isNaN(myEventHubTrigger.measures[2])) {
-        context.log("Invalid message format", error);
+        context.log("Invalid message format");
         context.done();
         return;
     }

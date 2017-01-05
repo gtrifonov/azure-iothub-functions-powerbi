@@ -34,6 +34,14 @@ const client = clientFromConnectionString(connectionString);
 // use Message object from core package
 const Message = require('azure-iot-device').Message;
 
+// Helper function to print results in the console
+function printResultFor(op) {
+    return function printResult(err, res) {
+        if (err) console.log(op + ' error: ' + err.toString());
+        if (res) console.log(op + ' status: ' + res.constructor.name);
+    };
+}
+
 //Sending messages when we connected
 var connected = false;
 var conectedAttempts = 0;
@@ -41,24 +49,44 @@ var connectCallback = function (err) {
     conectedAttempts++;
     if (err) {
         console.error('Could not connect: ' + err + ' Attempt:' + conectedAttempts);
-        if (conectedAttempts > 10) {
-            console.error("Exceeding Connection attempts quota. Exiting ...");
-            process.removeAllListeners();
-            process.exit(1);
-        } else {
-            setTimeout(function () { // set a timer for 5 second to try init again
-                client.removeAllListeners();
-                client.open(connectCallback);
-            }, 5000);
-        }
+        setTimeout(function () { // set a timer for 60 second to try connect again
+            client.removeAllListeners();
+            client.open(connectCallback);
+        }, 60000);
+
     } else {
         console.log('Client connected');
+        connected = true;
+        conectedAttempts = 0;
+
+        client.on('message', function (msg) {
+            console.log('Id: ' + msg.messageId + ' Body: ' + msg.data);
+            client.complete(msg, printResultFor('completed'));
+        });
+
+        client.on('reject', function (msg) {
+            console.log('Id: ' + msg.messageId + ' Body: ' + msg.data);
+            client.complete(msg, printResultFor('reject'));
+            // /!\ reject and abandon are not available with MQTT
+        });
+
+        client.on('abandon', function (msg) {
+            console.log('Id: ' + msg.messageId + ' Body: ' + msg.data);
+            client.complete(msg, printResultFor('abandon'));
+            // /!\ reject and abandon are not available with MQTT
+        });
+
+        // error event
+        client.on('error', function (err) {
+            console.error(err.message);
+        });
+
+        // disconnect event
         client.on('disconnect', function () {
+            console.log('Disconect');
             client.removeAllListeners();
             client.open(connectCallback);
         });
-        connected = true;
-        conectedAttempts = 0;
 
     };
 };
@@ -89,19 +117,14 @@ const board = new Board({
 
         dhtSensor.on('change', function (res) {
             console.log('DHT onChange value=' + res);
-            //Sending messages when we connected
-            if (connected && res) {
-                const data = JSON.stringify({ deviceId: 'raspberryPI', measures: res });
+            //Sending messages even if we are not connected
+            if (res) {
+                 const nowd = new Date();
+                const data = JSON.stringify({ deviceId: 'raspberryPI', measures: res, timestamp: nowd.toISOString() });
                 const msg = new Message(data);
-                client.sendEvent(msg, function (err) {
-                    const nowd = new Date();
-                    if (err) {
-                        console.error(err.toString() + '. Time:' + nowd.toString());
-                    } else {
-                        console.log('Message sent' + nowd.toString());
-                    };
-                });
-            }
+                console.log('Sending message: ' + message.getData());
+                client.sendEvent(message, printResultFor('send'));
+            } 
         });
         // FYI: there are 86400 seconds in a day. Azure Iot Hub limit for free tier is 8000 messages
         // Setting watch not to exceed message limit for free tier
